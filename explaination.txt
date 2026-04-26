@@ -1,0 +1,27 @@
+The Problem
+
+The goal of this project was to build a native Android application that replicates the functionality of an online compound interest calculator, similar to the one found at calculatorsoup.com. At its heart, compound interest is the process by which an investment grows not only on its original principal but also on all the interest it has already accumulated. The standard formula that governs this growth is A = P(1 + r/n)^(n × t), where A is the future value of the investment, P is the initial principal, r is the annual interest rate expressed as a decimal, n is the number of compounding periods per year, and t is the time in years. Beyond simply crunching that formula, the app needed to handle optional recurring monthly contributions, visualise the growth over time with a chart, offer financial insight tools, and be polished enough to feel like a real product rather than a homework exercise.
+
+Formula Precision
+
+The app implements the compound interest formula exactly as described above and allows the user to choose from six different compounding frequencies: Daily (365 times per year), Weekly (52), Monthly (12), Quarterly (4), Semi-Annually (2), and Annually (1). When the user also adds a regular monthly contribution, the app applies the standard future-value annuity formula — PMT × [(1 + r/12)^(12t) − 1] / (r/12) — so that recurring deposits are modelled in the realistic way a savings account or investment plan would actually work. A special edge case is also handled: if the interest rate is set to zero, the formula would normally divide by zero, so the app detects this and simply returns the straightforward sum of the principal plus all contributions instead.
+
+Data Input and Validation
+
+All three numeric input fields — principal, annual rate, and monthly contribution — are set up to display a decimal keyboard so users never have to switch keyboard modes. As the user types, a guard actively prevents a second decimal point from being entered, making it impossible to produce malformed numbers like "10.00.5". Negative values are blocked before any calculation takes place, and if a field is left empty or contains text that cannot be parsed as a number the result area simply disappears rather than crashing the app. Every field label includes the relevant unit or variable name, for example "Principal (P) $" and "Annual Rate (R) %", so there is never any ambiguity about what each input represents.
+
+Visualising Growth
+
+The app includes an interactive line chart powered by MPAndroidChart that plots two filled curves from Year 0 through to the end of the chosen time period. The purple curve represents the total portfolio value at each year, and the teal curve represents the cumulative amount the user has actually deposited. The visible gap between the two lines is the interest earned, which makes the exponential nature of compounding growth immediately apparent. Every time any input changes the chart re-draws itself with a smooth 600-millisecond animation. The Y-axis automatically formats large numbers with K or M suffixes so the labels stay readable, and the X-axis marks every five years for easy reference. A colour legend sits above the chart to label both lines clearly.
+
+Financial Insight
+
+Two additional cards help users develop genuine financial intuition rather than just reading a single number. The first is a "What If?" card that contains a slider allowing the user to extend the time horizon by anywhere from zero to twenty extra years. As the slider moves, the card instantly displays the new total amount, how much extra money that represents compared to the base scenario, and how much of that gain is pure interest. This makes the time-value-of-money concept concrete: starting an investment even a few years earlier can result in thousands of additional dollars. The second insight card is a Compounding Frequency Impact table that recomputes the final result for all six frequency options simultaneously, using the same principal, rate, time, and contribution values. The row matching the currently selected frequency is highlighted, letting the user see at a glance exactly how much difference daily compounding makes compared to annual compounding.
+
+UI Polish
+
+The entire interface is built with Jetpack Compose and Material 3. On devices running Android 12 or later the app takes advantage of Material You dynamic colour, automatically adapting its colour palette to match the user's wallpaper. On older devices a hand-crafted purple and teal colour scheme is used as a tasteful fallback. There is no "Calculate" button anywhere in the app; all results are derived reactively using Compose's derivedStateOf, so every keystroke or slider adjustment instantly updates the result card, the chart, the What If card, and the frequency comparison table at the same time. Cards feature 20 dp rounded corners and subtle elevation to create a clean, layered feel, and a deliberate typographic hierarchy — from headline down through title, body, and caption — keeps the information easy to scan at every level.
+
+Tech Stack
+
+The app is written in Kotlin 1.9.22 and targets Android 14 (API 34) with a minimum supported version of Android 7.0 Nougat (API 24). The UI layer uses Jetpack Compose with the 2024.02 BOM alongside Material 3 components. Charts are rendered by MPAndroidChart version 3.1.0, pulled in via JitPack. The project builds with Gradle 8.6 and Android Gradle Plugin 8.2.2.
